@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silverian Archives - The Ultimate Game DB</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <style>
+        body { background-color: #0b0f19; color: #e2e8f0; overflow-x: hidden; }
+        .section-title { font-family: 'Cinzel', serif; color: #c5a059; border-bottom: 2px solid #3a4b70; padding-bottom: 10px; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .text-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .text-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .custom-card { background-color: rgba(20,27,45,0.8); border: 1px solid #2e3b5e; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: 100%; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none;}
+        
+        /* Hover Effect Kartu (Skala Zoom & Glow Emas) */
+        .custom-card:hover { transform: translateY(-10px) scale(1.02); border-color: #c5a059; box-shadow: 0 15px 35px rgba(197, 160, 89, 0.2), 0 0 15px rgba(197, 160, 89, 0.1); }
+        
+        .card-img-top { height: 220px; object-fit: cover; border-bottom: 2px solid #2e3b5e; transition: 0.5s; }
+        .custom-card:hover .card-img-top { transform: scale(1.05); } 
+        
+        @keyframes bgPan {
+            0% { background-position: 50% 0%; }
+            50% { background-position: 50% 100%; }
+            100% { background-position: 50% 0%; }
+        }
+        .hero-banner { 
+            background: linear-gradient(to bottom, rgba(11,15,25,0.4), #0b0f19), url('/images/hero-bg.jpg'); 
+            background-size: cover;
+            animation: bgPan 30s infinite alternate ease-in-out;
+            padding: 140px 0; border-bottom: 2px solid #3a4b70; 
+        }
+        
+        .tier-badge { background: linear-gradient(135deg, #c5a059, #dfb96e); color: #000; font-family: 'Cinzel', serif; font-weight: 900; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3); }
+        
+        /* Animasi Mengambang (Floating) */
+        @keyframes floatChar {
+            0% { transform: translateY(0px); box-shadow: 0 0 0px rgba(197, 160, 89, 0); }
+            50% { transform: translateY(-8px); box-shadow: 0 10px 20px rgba(197, 160, 89, 0.4); border-color: #c5a059; }
+            100% { transform: translateY(0px); box-shadow: 0 0 0px rgba(197, 160, 89, 0); }
+        }
+        
+        .char-portrait-wrapper {
+            width: 140px; height: 140px;
+            border: 3px solid #3a4b70; border-radius: 50%;
+            margin: 15px auto; overflow: hidden;
+            background: radial-gradient(circle, rgba(30,41,59,1) 0%, rgba(11,15,25,1) 100%);
+            animation: floatChar 3.5s ease-in-out infinite; transition: 0.3s;
+        }
+        .char-img-zoom {
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: top center;
+            transform: scale(1.4) translateY(5%);
+            transition: 0.4s;
+        }
+        .custom-card:hover .char-portrait-wrapper { animation-play-state: paused; border-color: #dfb96e; box-shadow: 0 10px 25px rgba(197, 160, 89, 0.4); }
+        .custom-card:hover .char-img-zoom { transform: scale(1.5) translateY(5%); }
+        
+        .char-img-small { width: 70px; height: 70px; object-fit: cover; object-position: top center; border-radius: 10px; border: 2px solid #3a4b70; transition: 0.3s; }
+        .char-img-small:hover { border-color: #c5a059; transform: translateY(-5px) scale(1.1); box-shadow: 0 5px 15px rgba(197,160,89,0.4); }
+        
+        /* SOLUSI KARTU KEPOTONG DI SWIPER */
+        .characterSwiper {
+            padding-top: 25px !important;
+            padding-bottom: 60px !important; 
+            padding-left: 20px !important; 
+            padding-right: 20px !important; 
+            margin-top: -25px;
+            margin-left: -20px;
+            margin-right: -20px;
+        }
+        .swiper-slide { height: auto; }
+        .swiper-pagination-bullet { background: #cbd5e1; opacity: 0.5; }
+        .swiper-pagination-bullet-active { background: #c5a059; opacity: 1; transform: scale(1.3); }
+        .swiper-button-next, .swiper-button-prev { color: #c5a059; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .swiper-button-next:hover, .swiper-button-prev:hover { transform: scale(1.2); transition: 0.2s; }
+        
+        .footer { background-color: #05080f; border-top: 1px solid #3a4b70; padding: 50px 0; margin-top: 80px; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: rgba(11,15,25,0.95); border-bottom: 1px solid #c5a059; backdrop-filter: blur(15px);">
+        <div class="container">
+            <a class="navbar-brand" href="/" style="font-family: 'Cinzel', serif; color: #c5a059; font-weight: bold; letter-spacing: 1px;">SILVERIAN ARCHIVES</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item"><a class="nav-link text-light px-3" href="#characters">Characters</a></li>
+                    <li class="nav-item"><a class="nav-link text-light px-3" href="#tiers">Tier List</a></li>
+                    <li class="nav-item"><a class="nav-link text-light px-3" href="#codex">Lore</a></li>
+                    <% if(session.userId) { %>
+                        <li class="nav-item dropdown ms-3">
+                            <a class="nav-link dropdown-toggle btn btn-sm px-4 rounded-pill" style="background-color:#1e293b; color:#c5a059; border:1px solid #c5a059;" href="#" data-bs-toggle="dropdown"><%= session.username %></a>
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow" style="background-color: #0f172a; border: 1px solid #3a4b70;">
+                                <% if(session.role === 'Admin') { %>
+                                    <li><a class="dropdown-item fw-bold text-warning" href="/admin/dashboard">Admin Dashboard</a></li>
+                                <% } %>
+                                <li><hr class="dropdown-divider border-secondary"></li>
+                                <li><a class="dropdown-item text-danger" href="/auth/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    <% } else { %>
+                        <li class="nav-item ms-3"><a class="btn btn-sm px-4 rounded-pill" style="background-color:#c5a059; color:#0b0f19; font-weight:bold;" href="/auth/login">Login / Register</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <div class="hero-banner text-center text-light">
+        <div class="container">
+            <h1 class="display-3 fw-bold mb-3" data-aos="fade-down" style="font-family: 'Cinzel', serif; color: #f8fafc; text-shadow: 2px 4px 15px rgba(0,0,0,0.9);">Archive of the <span style="color:#c5a059;">Ancients</span></h1>
+            <p class="lead mb-4" data-aos="fade-up" data-aos-delay="200" style="color: #cbd5e1; max-width: 650px; margin: auto; text-shadow: 1px 2px 5px rgba(0,0,0,0.8);">Temukan panduan mekanik, meta tier list karakter, arsip lore mendalam, dan ulasan komunitas terbaik di The Silverian Archives.</p>
+            <a href="#characters" data-aos="zoom-in" data-aos-delay="400" class="btn btn-lg px-5 py-3 rounded-pill mt-3" style="background-color: #c5a059; color: #000; font-family: 'Cinzel', serif; font-weight: bold; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);">Explore Database</a>
+        </div>
+    </div>
+
+    <div class="container mt-5 pt-4">
+        
+        <!-- Latest News -->
+        <div id="news" class="mb-5 pt-4">
+            <h2 class="section-title" data-aos="fade-right">Latest Updates</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <% news.forEach((item, index) => { %>
+                    <div class="col" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+                        <a href="/news/<%= item.id %>" class="card custom-card">
+                            <div style="overflow: hidden;"><img src="<%= item.banner_url || '/placeholder.png' %>" class="card-img-top" alt="News"></div>
+                            <div class="card-body d-flex flex-column">
+                                <small class="text-warning fw-bold mb-2"><%= new Date(item.created_at).toLocaleDateString() %></small>
+                                <h5 class="card-title text-light text-clamp-1 m-0"><%= item.title %></h5>
+                            </div>
+                        </a>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+        <!-- Featured Characters -->
+        <div id="characters" class="mb-5 pt-5">
+            <h2 class="section-title" data-aos="fade-right">Featured Characters</h2>
+            
+            <div class="swiper characterSwiper" data-aos="fade-up" data-aos-delay="150">
+                <div class="swiper-wrapper">
+                    <% characters.forEach((char) => { %>
+                        <div class="swiper-slide">
+                            <div class="card custom-card text-center">
+                                <div class="char-portrait-wrapper">
+                                    <img src="<%= char.image_url || '/placeholder.png' %>" class="char-img-zoom" alt="Char">
+                                </div>
+                                <div class="card-body d-flex flex-column pt-0">
+                                    <h5 class="text-warning fw-bold text-clamp-1 mb-1" style="font-family: 'Cinzel', serif;"><%= char.name %></h5>
+                                    <div><span class="badge bg-secondary mb-3"><%= char.element %></span></div>
+                                    <a href="/character/<%= char.id %>" class="btn btn-sm w-100 mt-auto py-2" style="background-color: #1e293b; color: #fff; border: 1px solid #3a4b70; font-weight:bold; transition: 0.3s;">View Database &rarr;</a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+                
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+
+        <!-- Tier List Preview -->
+        <div id="tiers" class="mb-5 pt-5">
+            <h2 class="section-title" data-aos="fade-right">Meta Tier List</h2>
+            <div class="row">
+                <% tiers.forEach((tier, index) => { %>
+                    <div class="col-12 mb-3" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+                        <div class="card custom-card p-4 flex-row align-items-center" style="height: auto;">
+                            <div class="tier-badge me-4 flex-shrink-0"><%= tier.name %></div>
+                            <div class="d-flex flex-wrap gap-4 align-items-center w-100">
+                                <% if(tier.characters.length > 0) { %>
+                                    <% tier.characters.forEach(char => { %>
+                                        <a href="/character/<%= char.id %>" class="text-decoration-none text-center d-block" style="width: 70px;">
+                                            <img src="<%= char.image_url || '/placeholder.png' %>" class="char-img-small">
+                                            <div class="text-clamp-1 mt-2" style="font-size: 0.75rem; color: #cbd5e1; font-weight:bold;"><%= char.name %></div>
+                                        </a>
+                                    <% }) %>
+                                <% } else { %>
+                                    <span class="text-muted fst-italic">Kategori meta ini sedang kosong.</span>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+        <div class="row pt-4">
+            <!-- Codex Preview -->
+            <div id="codex" class="col-md-6 mb-5" data-aos="fade-right">
+                <h2 class="section-title">Lore & Codex</h2>
+                <% codex.forEach((lore, index) => { %>
+                    <div class="card custom-card mb-3 p-3 flex-row align-items-center" style="height: auto;" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+                        <img src="<%= lore.image_url || '/placeholder.png' %>" width="85" height="85" class="rounded me-3 flex-shrink-0" style="object-fit: cover; border: 1px solid #3a4b70;">
+                        <div class="w-100 overflow-hidden">
+                            <span class="badge bg-dark border border-secondary mb-2 text-warning"><%= lore.category_name %></span>
+                            <h5 class="text-light m-0 text-clamp-1"><%= lore.title %></h5>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+
+            <!-- Mechanics Preview -->
+            <div id="mechanics" class="col-md-6 mb-5" data-aos="fade-left">
+                <h2 class="section-title">Game Guides</h2>
+                <% mechanics.forEach((mech, index) => { %>
+                    <div class="card custom-card mb-3 p-3 flex-row align-items-center" style="height: auto;" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+                        <img src="<%= mech.thumbnail_url || '/placeholder.png' %>" width="85" height="85" class="rounded me-3 flex-shrink-0" style="object-fit: cover; border: 1px solid #3a4b70;">
+                        <div class="w-100 overflow-hidden">
+                            <h5 class="text-light mb-1 text-clamp-1"><%= mech.title %></h5>
+                            <small class="text-muted d-block text-clamp-1">Tutorial & Panduan Sistem</small>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+        <!-- Community Reviews -->
+        <div id="reviews" class="mb-5 pt-5">
+            <h2 class="section-title" data-aos="fade-up">Community Voice</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                <% reviews.forEach((review, index) => { %>
+                    <div class="col" data-aos="zoom-in" data-aos-delay="<%= index * 100 %>">
+                        <div class="card custom-card p-4">
+                            <div class="d-flex align-items-center mb-3 pb-3" style="border-bottom: 1px solid #2e3b5e;">
+                                <img src="<%= review.char_image || '/placeholder.png' %>" width="45" height="45" class="rounded-circle me-3 flex-shrink-0" style="object-fit:cover; object-position: top center; border: 2px solid #c5a059;">
+                                <div>
+                                    <h6 class="text-light m-0 text-clamp-1"><%= review.char_name %></h6>
+                                    <small class="text-warning">By <%= review.username %></small>
+                                </div>
+                            </div>
+                            <div style="color: #fbbf24; font-size: 1.1rem; margin-bottom: 12px; letter-spacing:2px;">
+                                <% for(let i=1; i<=5; i++) { %>
+                                    <%= i <= review.rating ? '★' : '☆' %>
+                                <% } %>
+                            </div>
+                            <p class="text-light fst-italic text-clamp-3 mb-4" style="font-size: 0.95rem; color: #cbd5e1;">"<%= review.content %>"</p>
+                            
+                            <a href="/character/<%= review.char_id %>" class="btn btn-sm btn-outline-light w-100 mt-auto rounded-pill py-2">Read Context</a>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+        <div class="container" data-aos="fade-up">
+            <h4 style="font-family: 'Cinzel', serif; color: #c5a059; font-weight:bold; letter-spacing:2px;">SILVERIAN ARCHIVES</h4>
+            <p style="color: #94a3b8; max-width: 550px; margin: 15px auto;">The ultimate database for lore enthusiasts, theorycrafters, and meta-slaves. Built with Express.js and Bootstrap 5.</p>
+            <div class="mt-4">
+                <a href="#characters" class="text-muted text-decoration-none mx-3 hover-warning">Characters</a>
+                <a href="#tiers" class="text-muted text-decoration-none mx-3 hover-warning">Tier List</a>
+                <a href="#codex" class="text-muted text-decoration-none mx-3 hover-warning">Codex</a>
+            </div>
+            <hr style="border-color: #2e3b5e; margin: 40px 0 20px 0;">
+            <small style="color: #64748b;">&copy; 2026 Silverian Archives Team. All rights reserved.</small>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    
+    <script>
+        // AOS Animasi Atas-Bawah Bolak-Balik (Sensitivitas Tinggi)
+        AOS.init({
+            duration: 800, 
+            easing: 'ease-out-cubic', 
+            once: false,                    // False = Animasi jalan terus-menerus
+            mirror: true,                   // True = Reverse animasi saat scroll ke atas
+            offset: 0,                      // SUPER SENSITIF: 0px agar langsung mereset
+            anchorPlacement: 'top-bottom'   // Patokan kemunculan animasi yang responsif
+        });
+
+        // Inisialisasi Swiper.js
+        var swiper = new Swiper(".characterSwiper", {
+            slidesPerView: 1,      
+            spaceBetween: 20,      
+            grabCursor: true,      
+            loop: false,           
+            pagination: { el: ".swiper-pagination", clickable: true },
+            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+            breakpoints: {
+                576: { slidesPerView: 2, spaceBetween: 20 }, 
+                768: { slidesPerView: 3, spaceBetween: 20 }, 
+                992: { slidesPerView: 4, spaceBetween: 24 }  
+            },
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Character - Silverian Archives</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="pt-5">
+    <div class="container" style="max-width: 800px;">
+        <h2 class="mb-4" style="font-family: 'Cinzel', serif; color: #c5a059;">Edit Character Archive</h2>
+        
+        <% if(errors.length > 0) { %>
+            <div class="alert alert-danger" style="background-color: rgba(127,29,29,0.2); border-color: #7f1d1d; color: #fca5a5;">
+                <ul class="mb-0">
+                    <% errors.forEach(err => { %> <li><%= err.msg %></li> <% }) %>
+                </ul>
+            </div>
+        <% } %>
+
+        <div class="card p-4" style="background-color: rgba(20,27,45,0.85); border: 1px solid #3a4b70;">
+            <form action="/admin/characters/edit/<%= character.id %>" method="POST" enctype="multipart/form-data">
+                
+                <div class="mb-3">
+                    <label class="form-label text-light">Character Name</label>
+                    <input type="text" name="name" class="form-control" style="background-color: #0f172a; color:#fff; border: 1px solid #3a4b70;" value="<%= character.name %>">
+                </div>
+
+                <!-- LANGKAH C: Dropdown Pemilihan Tier ditambahkan di sini -->
+                <div class="mb-3">
+                    <label class="form-label text-light">Meta Tier Assignment</label>
+                    <select name="tier_id" class="form-control" style="background-color: #0f172a; color:#fff; border: 1px solid #3a4b70;">
+                        <option value="">-- Tanpa Tier --</option>
+                        <% if(typeof tiers !== 'undefined') { %>
+                            <% tiers.forEach(t => { %>
+                                <option value="<%= t.id %>" <%= character.tier_id == t.id ? 'selected' : '' %>><%= t.name %></option>
+                            <% }) %>
+                        <% } %>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-light">Element / Class</label>
+                    <input type="text" name="element" class="form-control" style="background-color: #0f172a; color:#fff; border: 1px solid #3a4b70;" value="<%= character.element %>">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label text-light">Short Description</label>
+                    <textarea name="description" class="form-control" rows="3" style="background-color: #0f172a; color:#fff; border: 1px solid #3a4b70;"><%= character.description %></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label text-light">Lore Background (Codex)</label>
+                    <textarea name="lore_background" class="form-control" rows="6" style="background-color: #0f172a; color:#fff; border: 1px solid #3a4b70;"><%= character.lore_background %></textarea>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label text-light d-block">Character Portrait</label>
+                    <% if(character.image_url) { %>
+                        <img src="<%= character.image_url %>" width="100" class="mb-2 rounded border border-secondary">
+                    <% } %>
+                    <input type="file" name="image" class="form-control" style="background-color: #0f172a; color:#fff; border: 1px solid #3a4b70;" accept="image/*">
+                    <small class="text-muted">Biarkan kosong jika tidak ingin mengubah gambar.</small>
+                </div>
+                
+                <button type="submit" class="btn w-100" style="background-color: #c5a059; color: #000; font-weight: bold; font-family: 'Cinzel', serif;">Update Archives</button>
+                <a href="/admin/characters" class="btn btn-outline-light w-100 mt-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

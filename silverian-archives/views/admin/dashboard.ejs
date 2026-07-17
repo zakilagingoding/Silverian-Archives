@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Silverian Archives</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body { background-color: #05080f; color: #e2e8f0; min-height: 100vh; }
+        .dashboard-navbar { background-color: rgba(11, 15, 25, 0.95); border-bottom: 2px solid #3a4b70; backdrop-filter: blur(10px); }
+        
+        .stat-card { 
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%); 
+            border: 1px solid #3a4b70; border-top: 3px solid #c5a059; border-radius: 8px; 
+            transition: all 0.3s ease; display: flex; flex-direction: column; position: relative; overflow: hidden;
+        }
+        .stat-card:hover { transform: translateY(-5px); border-color: #dfb96e; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(197, 160, 89, 0.1); }
+        .stat-title { color: #94a3b8; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; }
+        .stat-value { color: #c5a059; font-size: 3rem; font-family: 'Cinzel', serif; font-weight: 700; margin: 10px 0 20px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+        
+        .btn-action-view { background-color: #0f172a; color: #cbd5e1; border: 1px solid #3a4b70; transition: 0.3s; }
+        .btn-action-view:hover { background-color: #3a4b70; color: #fff; border-color: #94a3b8; }
+        
+        .btn-action-add { background: linear-gradient(135deg, #c5a059, #dfb96e); color: #000; font-weight: bold; border: none; transition: 0.3s; }
+        .btn-action-add:hover { transform: scale(1.03); filter: brightness(1.1); }
+    </style>
+</head>
+<body>
+    <nav class="navbar dashboard-navbar px-4 py-3 shadow-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand text-light" style="font-family: 'Cinzel', serif; font-weight: bold; letter-spacing: 1px;" href="#"><span style="color: #c5a059;">SILVERIAN</span> ARCHIVES</a>
+            <div class="d-flex align-items-center">
+                <span class="text-light me-4" style="font-size: 0.9rem;">Welcome, <strong style="color: #c5a059;"><%= username %></strong></span>
+                <a href="/" class="btn btn-outline-light btn-sm me-3 rounded-pill px-3">View Portal</a>
+                <a href="/auth/logout" class="btn btn-sm rounded-pill px-3 fw-bold" style="background-color: #7f1d1d; color: #fca5a5; border: 1px solid #dc2626;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 mb-5">
+        <div class="row mb-5 border-bottom border-secondary pb-4">
+            <div class="col-12">
+                <h2 style="font-family: 'Cinzel', serif; color: #f8fafc; letter-spacing: 1px; text-transform: uppercase;">Command Center</h2>
+                <p style="color: #94a3b8; font-size: 1.1rem;">Kelola arsip database secara real-time.</p>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <!-- Terapkan format ini ke 6 card yang ada -->
+            <div class="col">
+                <div class="card stat-card h-100 p-4">
+                    <div class="card-body d-flex flex-column p-0">
+                        <h6 class="stat-title">Characters Archive</h6>
+                        <h2 class="stat-value"><%= stats.characters %></h2>
+                        <div class="mt-auto d-flex gap-2">
+                            <a href="/admin/characters" class="btn btn-sm w-50 btn-action-view">View List</a>
+                            <a href="/admin/characters/create" class="btn btn-sm w-50 btn-action-add">+ Add New</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card stat-card h-100 p-4">
+                    <div class="card-body d-flex flex-column p-0">
+                        <h6 class="stat-title">Codex & Lore</h6>
+                        <h2 class="stat-value"><%= stats.lore %></h2>
+                        <div class="mt-auto d-flex gap-2">
+                            <a href="/admin/codex" class="btn btn-sm w-50 btn-action-view">View List</a>
+                            <a href="/admin/codex/create" class="btn btn-sm w-50 btn-action-add">+ Add New</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card stat-card h-100 p-4">
+                    <div class="card-body d-flex flex-column p-0">
+                        <h6 class="stat-title">Game Mechanics</h6>
+                        <h2 class="stat-value"><%= stats.mechanics %></h2>
+                        <div class="mt-auto d-flex gap-2">
+                            <a href="/admin/mechanics" class="btn btn-sm w-50 btn-action-view">View List</a>
+                            <a href="/admin/mechanics/create" class="btn btn-sm w-50 btn-action-add">+ Add New</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card stat-card h-100 p-4">
+                    <div class="card-body d-flex flex-column p-0">
+                        <h6 class="stat-title">News Updates</h6>
+                        <h2 class="stat-value"><%= stats.news %></h2>
+                        <div class="mt-auto d-flex gap-2">
+                            <a href="/admin/news" class="btn btn-sm w-50 btn-action-view">View List</a>
+                            <a href="/admin/news/create" class="btn btn-sm w-50 btn-action-add">+ Add New</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col">
+                <div class="card stat-card h-100 p-4">
+                    <div class="card-body d-flex flex-column p-0">
+                        <h6 class="stat-title">Meta Tier List</h6>
+                        <h2 class="stat-value" style="font-size: 2.2rem; margin-top:15px; color:#c5a059;">MANAGE</h2>
+                        <a href="/admin/tiers" class="btn btn-sm w-100 mt-auto btn-action-view">Setup Meta Tier List &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card stat-card h-100 p-4" style="border-top-color: #3a4b70; background: #0b0f19;">
+                    <div class="card-body d-flex flex-column p-0">
+                        <h6 class="stat-title text-muted">Community Reviews</h6>
+                        <h2 class="stat-value text-muted" style="color: #475569;"><%= stats.reviews %></h2>
+                        <span class="mt-auto text-muted small fst-italic border-top border-secondary pt-2">Auto-managed by user system</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

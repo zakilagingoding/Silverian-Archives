@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Tier List - Silverian Archives</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .tier-badge {
+            width: 100px;
+            background-color: #c5a059;
+            color: #0b0f19;
+            font-size: 2.5rem;
+            font-weight: 900;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            box-shadow: 0 4px 10px rgba(197, 160, 89, 0.2);
+        }
+        .stat-card { background-color: rgba(20, 27, 45, 0.85); border: 1px solid #3a4b70; }
+        .char-img { object-fit: cover; border: 2px solid #3a4b70; }
+    </style>
+</head>
+<body class="pt-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 style="font-family: 'Cinzel', serif; color: #c5a059;">Meta Tier List Manager</h2>
+            <div>
+                <a href="/admin/dashboard" class="btn btn-outline-light me-2">Back to Dashboard</a>
+                <a href="/admin/tiers/create" class="btn" style="background-color: #c5a059; color: #000; font-weight: bold;">+ Add Custom Tier</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <% tiers.forEach(tier => { %>
+                <div class="col-12 mb-4">
+                    <div class="card stat-card p-4 d-flex flex-row align-items-stretch">
+                        <!-- Tanda Ranking -->
+                        <div class="tier-badge me-4">
+                            <%= tier.name %>
+                        </div>
+                        
+                        <!-- Detail dan Karakter di dalamnya -->
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <p class="text-light mb-2"><strong>Alasan:</strong> <%= tier.description %></p>
+                                <div>
+                                    <a href="/admin/tiers/edit/<%= tier.id %>" class="btn btn-sm" style="background-color: #1e293b; color:#fff; border: 1px solid #3a4b70;">Edit</a>
+                                    <form action="/admin/tiers/delete/<%= tier.id %>" method="POST" class="d-inline" onsubmit="return confirm('Hapus Tier ini secara permanen?');">
+                                        <button class="btn btn-sm btn-danger" style="background-color: #7f1d1d; border-color: #dc2626;">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <hr style="border-color:#3a4b70;">
+                            
+                            <!-- Daftar Karakter yang Terhubung -->
+                            <div class="d-flex flex-wrap gap-3 mt-2">
+                                <% if(tier.characters && tier.characters.length > 0) { %>
+                                    <% tier.characters.forEach(char => { %>
+                                        <div class="text-center">
+                                            <img src="<%= char.image_url || '/placeholder.png' %>" width="60" height="60" class="rounded char-img">
+                                            <div style="font-size: 0.75rem; margin-top: 5px; color: #94a3b8;"><%= char.name %></div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <span class="text-muted small">Belum ada karakter yang dimasukkan ke tier ini.</span>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+</body>
+</html>

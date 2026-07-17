@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= character.name %> - Silverian Archives</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body { background-color: #0b0f19; overflow-x: hidden; }
+        
+        /* Layout Half-Body untuk Detail Karakter */
+        .char-half-body-container {
+            width: 100%; height: 600px;
+            overflow: hidden; border-radius: 16px;
+            border: 1px solid #3a4b70;
+            background: radial-gradient(circle, rgba(30,41,59,0.8) 0%, rgba(11,15,25,1) 100%);
+            position: relative;
+        }
+        .char-half-body-img {
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: top center;
+            transform: scale(1.1) translateY(5%); /* Menyesuaikan batas potongan */
+            transition: 0.5s ease-out;
+        }
+        .char-half-body-container:hover .char-half-body-img { transform: scale(1.15) translateY(5%); }
+        
+        /* Elemen Penutup Gradasi Bawah agar menyatu dengan layar */
+        .gradient-overlay {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 150px;
+            background: linear-gradient(to top, #0b0f19 0%, transparent 100%);
+        }
+
+        .star-rating { color: #475569; font-size: 1.2rem; }
+        .star-rating .active { color: #fbbf24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
+        
+        .rating-input { direction: rtl; display: inline-block; }
+        .rating-input input { display: none; }
+        .rating-input label { color: #475569; font-size: 2rem; padding: 0; cursor: pointer; transition: color 0.2s; }
+        .rating-input label:hover, .rating-input label:hover ~ label, .rating-input input:checked ~ label { color: #fbbf24; }
+        
+        .review-card { background-color: rgba(20,27,45,0.6); border: 1px solid #3a4b70; border-radius: 12px; transition: 0.3s; }
+        .review-card:hover { border-color: #c5a059; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .comment-box { background-color: rgba(15,23,42,0.8); border-left: 3px solid #c5a059; }
+    </style>
+</head>
+<body class="pt-5 pb-5">
+    
+    <div class="container mb-4" data-aos="fade-right">
+        <a href="/" class="btn btn-outline-light btn-sm rounded-pill px-4" style="font-family: 'Lato', sans-serif;">&larr; Back to Portal</a>
+    </div>
+
+    <div class="container">
+        <!-- Bagian Profil Karakter -->
+        <div class="row mb-5">
+            <!-- Sisi Kiri: Foto Half-Body -->
+            <div class="col-md-5 mb-4" data-aos="fade-right" data-aos-duration="1000">
+                <div class="char-half-body-container shadow-lg">
+                    <% if(character.image_url) { %>
+                        <img src="<%= character.image_url %>" class="char-half-body-img">
+                        <div class="gradient-overlay"></div>
+                    <% } else { %>
+                        <div class="bg-secondary rounded d-flex align-items-center justify-content-center h-100 text-light">No Image Archive</div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Sisi Kanan: Data & Lore -->
+            <div class="col-md-7 ps-md-4" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+                <h1 class="display-4 fw-bold" style="font-family: 'Cinzel', serif; color: #c5a059;"><%= character.name %></h1>
+                <span class="badge bg-secondary mb-4 fs-6 px-3 py-2 rounded-pill border border-light"><%= character.element %></span>
+                
+                <div class="card p-3 mb-4" style="background-color: rgba(15,23,42,0.6); border: 1px dashed #3a4b70; border-radius: 12px;">
+                    <h5 class="text-light mb-1">Community Rating</h5>
+                    <div class="d-flex align-items-center">
+                        <h2 class="text-warning mb-0 me-2 fw-bold"><%= ratingData.average %></h2>
+                        <span class="star-rating active fs-3">&#9733;</span>
+                        <span class="text-muted ms-3 fst-italic">(Dari <%= ratingData.total %> Ulasan Komunitas)</span>
+                    </div>
+                </div>
+                
+                <h4 class="text-light mt-4" style="font-family: 'Cinzel', serif; border-bottom: 1px solid #3a4b70; padding-bottom: 5px;">Overview</h4>
+                <p style="color: #cbd5e1; font-size: 1.1rem; line-height: 1.6;"><%= character.description %></p>
+                
+                <h4 class="text-light mt-4" style="font-family: 'Cinzel', serif; border-bottom: 1px solid #3a4b70; padding-bottom: 5px;">Codex / Background</h4>
+                <p style="color: #94a3b8; white-space: pre-wrap; line-height: 1.7;"><%= character.lore_background %></p>
+            </div>
+        </div>
+
+        <!-- Bagian Sistem Review -->
+        <h3 class="mb-4 text-center mt-5" data-aos="fade-up" style="font-family: 'Cinzel', serif; color: #c5a059; text-transform: uppercase; letter-spacing: 2px;">Community Reviews</h3>
+
+        <!-- Form Tambah Review -->
+        <% if(session.userId) { %>
+            <div class="card review-card p-4 mb-5 border-warning shadow" data-aos="zoom-in">
+                <h5 class="text-warning mb-3 fw-bold">Tulis Analisa Anda</h5>
+                <form action="/review/<%= character.id %>" method="POST">
+                    <div class="mb-2">
+                        <label class="text-light d-block mb-1">Berikan Rating Performa:</label>
+                        <div class="rating-input">
+                            <input type="radio" id="star5" name="rating" value="5" required /><label for="star5" title="5 Stars">&#9733;</label>
+                            <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 Stars">&#9733;</label>
+                            <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 Stars">&#9733;</label>
+                            <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 Stars">&#9733;</label>
+                            <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 Star">&#9733;</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <textarea name="content" class="form-control" rows="3" placeholder="Bagaimana pandangan Anda tentang karakter ini di meta sekarang?" style="background-color: #0f172a; color:#fff; border: 1px solid #3a4b70;" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-warning fw-bold px-4 rounded-pill">Kirim Ke Arsip</button>
+                </form>
+            </div>
+        <% } else { %>
+            <div class="alert alert-secondary text-center py-4 rounded-4 shadow" data-aos="fade-up" style="background-color: rgba(30,41,59,0.8); border-color:#3a4b70; color:#cbd5e1;">
+                Silakan <a href="/auth/login" class="text-warning fw-bold text-decoration-none">Login ke Sistem</a> untuk berpartisipasi memberikan rating dan review.
+            </div>
+        <% } %>
+
+        <!-- Daftar Review -->
+        <div class="row">
+        <% if(reviews.length > 0) { %>
+            <% reviews.forEach((review, index) => { %>
+                <div class="col-12 mb-4" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+                    <div class="card review-card p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <strong class="text-light fs-5"><%= review.username %></strong> 
+                                <% if(review.role === 'Admin') { %><span class="badge bg-danger ms-1 px-2">Admin</span><% } %>
+                                
+                                <div class="star-rating mt-1">
+                                    <% for(let i=1; i<=5; i++) { %>
+                                        <span class="<%= i <= review.rating ? 'active' : '' %>">&#9733;</span>
+                                    <% } %>
+                                </div>
+                            </div>
+                            
+                            <!-- Tombol Edit/Delete -->
+                            <% if(session.userId === review.user_id) { %>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-3" data-bs-toggle="collapse" data-bs-target="#editForm-<%= review.id %>">Edit</button>
+                                    <form action="/review/delete/<%= review.id %>" method="POST" onsubmit="return confirm('Hapus review ini dari arsip?');">
+                                        <input type="hidden" name="charId" value="<%= character.id %>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Hapus</button>
+                                    </form>
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <p class="text-light mt-2 mb-3" style="font-size: 1.05rem; line-height: 1.6;"><%= review.content %></p>
+
+                        <!-- Form Edit -->
+                        <% if(session.userId === review.user_id) { %>
+                            <div class="collapse mb-3" id="editForm-<%= review.id %>">
+                                <form action="/review/edit/<%= review.id %>" method="POST" class="p-3 rounded border border-info" style="background-color: rgba(15,23,42,0.8);">
+                                    <input type="hidden" name="charId" value="<%= character.id %>">
+                                    <label class="text-light d-block mb-1">Update Rating (1-5):</label>
+                                    <input type="number" name="rating" min="1" max="5" class="form-control mb-2 w-25" style="background-color: #0f172a; color:#fff;" value="<%= review.rating %>" required>
+                                    <textarea name="content" class="form-control mb-2" rows="2" style="background-color: #0f172a; color:#fff;" required><%= review.content %></textarea>
+                                    <button type="submit" class="btn btn-sm btn-info text-dark fw-bold rounded-pill px-4">Simpan Perubahan</button>
+                                </form>
+                            </div>
+                        <% } %>
+
+                        <!-- Sistem Like & Komentar -->
+                        <div class="d-flex align-items-center mt-3 pt-3" style="border-top: 1px dashed #3a4b70;">
+                            <form action="/review/like/<%= review.id %>" method="POST" class="me-3">
+                                <input type="hidden" name="charId" value="<%= character.id %>">
+                                <button type="submit" class="btn btn-sm rounded-pill px-3 fw-bold <%= review.user_has_liked ? 'btn-warning' : 'btn-outline-warning' %>" <%= !session.userId ? 'disabled' : '' %>>
+                                    &#10084; Like (<%= review.likes_count %>)
+                                </button>
+                            </form>
+                            
+                            <button class="btn btn-sm btn-outline-light rounded-pill px-3" data-bs-toggle="collapse" data-bs-target="#comments-<%= review.id %>">
+                                Komentar (<%= review.comments.length %>)
+                            </button>
+                        </div>
+
+                        <!-- Area Komentar -->
+                        <div class="collapse mt-3" id="comments-<%= review.id %>">
+                            <% review.comments.forEach(comment => { %>
+                                <div class="comment-box p-3 mb-2 rounded border border-secondary">
+                                    <strong style="color: #c5a059;"><%= comment.username %></strong>
+                                    <% if(comment.role === 'Admin') { %><span class="badge bg-danger ms-1" style="font-size:0.6rem;">Admin</span><% } %>
+                                    <p class="mb-0 mt-1" style="color: #cbd5e1; font-size: 0.95rem;"><%= comment.content %></p>
+                                </div>
+                            <% }) %>
+
+                            <% if(session.userId) { %>
+                                <form action="/review/comment/<%= review.id %>" method="POST" class="mt-3 d-flex">
+                                    <input type="hidden" name="charId" value="<%= character.id %>">
+                                    <input type="text" name="content" class="form-control form-control-sm me-2 rounded-pill px-3" placeholder="Tulis balasan diskusi..." style="background-color: #0f172a; color:#fff; border-color: #3a4b70;" required>
+                                    <button type="submit" class="btn btn-sm btn-secondary rounded-pill px-4 fw-bold">Kirim</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="col-12">
+                <div class="text-center text-muted p-5 rounded-4 shadow" data-aos="fade-in" style="background-color: rgba(20,27,45,0.6); border: 2px dashed #3a4b70;">
+                    <h5>Belum ada ulasan yang tersimpan di arsip.</h5>
+                    <p class="m-0">Jadilah pionir pertama yang membagikan analisa karakter ini!</p>
+                </div>
+            </div>
+        <% } %>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: false,
+            mirror: true,
+            offset: 50
+        });
+    </script>
+</body>
+</html>
